@@ -1,5 +1,4 @@
 from django.core.exceptions import SuspiciousOperation
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
@@ -56,6 +55,10 @@ class FollowSerializer(serializers.ModelSerializer):
         ]
 
     def validate_following(self, value):
-        if (value == self.context['request'].user):
-            raise SuspiciousOperation
+        if value not in User.objects.all():
+            raise SuspiciousOperation(
+                f'Объект с username={value.username} не существует.')
+        user = self.context['request'].user
+        if value == user:
+            raise SuspiciousOperation('Нельзя подписаться на самого себя!')
         return value
