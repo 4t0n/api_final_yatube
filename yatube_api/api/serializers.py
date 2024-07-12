@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
-
 from posts.models import Comment, Follow, Group, Post, User
 
 
@@ -54,11 +53,8 @@ class FollowSerializer(serializers.ModelSerializer):
             )
         ]
 
-    def validate_following(self, value):
-        if value not in User.objects.all():
-            raise SuspiciousOperation(
-                f'Объект с username={value.username} не существует.')
+    def validate_following(self, following):
         user = self.context['request'].user
-        if value == user:
+        if following == user:
             raise SuspiciousOperation('Нельзя подписаться на самого себя!')
-        return value
+        return following
