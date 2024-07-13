@@ -51,8 +51,7 @@ class FollowViewSet(
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        user = self.request.user
-        follows = user.following
+        follows = self.request.user.following.all()
         return follows
 
     def perform_create(self, serializer):
